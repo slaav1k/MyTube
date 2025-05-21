@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Видео из MyTube</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            padding: 10px;
+        }
+        h1 {
+            color: #212529;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        .toggle {
+            cursor: pointer;
+            color: #343a40;
+            font-weight: 600;
+            margin: 8px 0;
+            padding: 12px 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle:hover {
+            background-color: #dee2e6;
+        }
+        .toggle::after {
+            content: ' ▼';
+            font-size: 0.9em;
+        }
+        .toggle.active::after {
+            content: ' ▲';
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        li {
+            background: #ffffff;
+            margin-bottom: 12px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+        li:hover {
+            transform: translateY(-2px);
+        }
+        .video-button {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            flex: 1; /* Растягиваем кнопки */
+            max-width: calc(50% - 8px); /* Половина ширины с учетом gap */
+            text-align: center; /* Центрируем текст */
+        }
+        .video-button:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+        .video-button.primary {
+            background-color: #0d6efd;
+        }
+        .video-button.primary:hover {
+            background-color: #0b5ed7;
+        }
+        .file-path {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+        .container {
+            max-width: 100%;
+            padding: 0 10px;
+        }
+        .video-title {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px; /* Увеличил gap для четкого разделения */
+            width: 100%; /* Растягиваем на всю ширину */
+        }
+        .cover-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            .toggle {
+                padding: 14px 10px;
+                font-size: 1.1rem;
+            }
+            li {
+                padding: 12px;
+            }
+            .video-button {
+                padding: 12px 18px;
+                font-size: 15px;
+                max-width: calc(50% - 8px); /* Сохраняем половину ширины */
+                text-align: center;
+            }
+            .container {
+                padding: 0 5px;
+            }
+            .cover-img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+        @media (max-width: 576px) {
+            .video-button {
+                max-width: 100%; /* На очень маленьких экранах кнопки на всю ширину */
+                flex: none;
+            }
+            .button-group {
+                flex-direction: column; /* Кнопки друг под другом */
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Видео из MyTube</h1>
+        {% if shows %}
+            {% for show in shows %}
+                {% set show_id = show.show_name | replace(' ', '_') %}
+                <div>
+                    <div class="toggle" onclick="toggleBlock('{{ show_id }}')">
+                        {% if show.cover_path %}
+                            <img src="{{ url_for('static', filename=show.cover_path) }}" alt="{{ show.show_name }} cover" class="cover-img">
+                        {% endif %}
+                        {{ show.show_name }}
+                    </div>
+                    <div id="{{ show_id }}" style="display: none; padding-left: 10px;">
+                        {% for season in show.seasons %}
+                            {% set season_id = show_id ~ '_' ~ season.season_name | replace(' ', '_') %}
+                            <div>
+                                <div class="toggle" onclick="toggleBlock('{{ season_id }}')">{{ season.season_name }}</div>
+                                <ul id="{{ season_id }}" style="display: none;">
+                                    {% for file in season.videos %}
+                                        <li>
+                                            <div class="video-title">{{ file.name }}</div>
+                                            <div class="file-path">{{ file.path }}</div>
+                                            <div class="button-group">
+                                                <a class="video-button primary" href="{{ file.public_url }}" target="_blank">Смотреть</a>
+                                                <a class="video-button" href="#" onclick="openPopup('{{ file.public_url }}'); return false;">В окне</a>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                Видео не найдены. Запустите скрипт для создания videos.json.
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openPopup(url) {
+            window.open(url, '_blank', 'width=800,height=600');
+        }
+
+        function toggleBlock(id) {
+            const el = document.getElementById(id);
+            const toggle = event.currentTarget;
+            if (el.style.display === 'none') {
+                el.style.display = 'block';
+                toggle.classList.add('active');
+            } else {
+                el.style.display = 'none';
+                toggle.classList.remove('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggles = document.querySelectorAll('.toggle');
+            toggles.forEach(toggle => {
+                toggle.style.cursor = 'pointer';
+                toggle.style.userSelect = 'none';
+            });
+
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+        });
+    </script>
+</body>
+</html>
