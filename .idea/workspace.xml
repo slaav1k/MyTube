@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="368c3267-cf0e-44d6-8737-a3e95cd3e609" name="Changes" comment="убрал кнопку">
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-    </list>
+    <list default="true" id="368c3267-cf0e-44d6-8737-a3e95cd3e609" name="Changes" comment="иконка" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -127,13 +125,22 @@
       <option name="project" value="LOCAL" />
       <updated>1747883595697</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="иконка">
+      <option name="closed" value="true" />
+      <created>1747885146166</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1747885146166</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="работает" />
     <MESSAGE value="убрал кнопку" />
-    <option name="LAST_COMMIT_MESSAGE" value="убрал кнопку" />
+    <MESSAGE value="иконка" />
+    <option name="LAST_COMMIT_MESSAGE" value="иконка" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
