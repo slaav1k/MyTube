@@ -2,7 +2,7 @@ import hashlib
 import json
 import os
 import requests
-
+import threading
 from flask import Flask, render_template, jsonify
 
 from main import index_videos_to_file
@@ -54,11 +54,15 @@ def index():
 
 @app.route('/reindex')
 def reindex():
-    try:
-        shows = index_videos_to_file(YANDEX_TOKEN, YANDEX_PATH, VIDEOS_JSON)
-        return jsonify({"status": "ok", "shows": [show["show_name"] for show in shows]})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+    def run_reindex():
+        try:
+            shows = index_videos_to_file(YANDEX_TOKEN, YANDEX_PATH, VIDEOS_JSON)
+            print(f"Реиндексация завершена: {len(shows)} шоу обработано")
+        except Exception as e:
+            print(f"Ошибка во время реиндексации: {e}")
+
+    threading.Thread(target=run_reindex, daemon=True).start()
+    return jsonify({"status": "started", "message": "Реиндексация запущена в фоновом режиме"})
 
 
 if __name__ == '__main__':
